@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Special for Luntik | 8 March</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --neon-pink: #ff4da6;
+            --deep-pink: #d4145a;
+            --glass: rgba(20, 20, 20, 0.85);
+            --border: rgba(255, 77, 166, 0.4);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh;
+        }
+
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; filter: blur(0.5px); }
+
+        #loader {
+            position: fixed; inset: 0; background: #000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 1000; 
+            animation: finalFade 2.5s forwards 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .loader-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 10vw, 4rem);
+            color: var(--neon-pink);
+            letter-spacing: 15px;
+            text-shadow: 0 0 30px var(--neon-pink);
+            margin-bottom: 20px;
+        }
+
+        @keyframes finalFade { to { opacity: 0; visibility: hidden; } }
+
+        .scene {
+            position: relative;
+            width: 360px; height: 540px;
+            perspective: 2500px;
+            animation: cardFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0) rotateX(0deg); }
+            50% { transform: translateY(-15px) rotateX(2deg); }
+        }
+
+        @media (max-width: 480px) {
+            .scene { width: 88vw; height: 78vh; }
+        }
+
+        .card {
+            width: 100%; height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-cover {
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
+            border-radius: 20px;
+            z-index: 10;
+            transform-origin: left;
+            transition: transform 1.8s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 1s;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            border: 1px solid var(--border);
+            backface-visibility: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,1);
+            cursor: pointer;
+        }
+
+        .card.is-open .card-cover {
+            transform: rotateY(-145deg);
+            box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+        }
+
+        .cover-content { text-align: center; }
+        .cover-content h1 { 
+            font-size: 100px; margin: 0; 
+            filter: drop-shadow(0 0 20px var(--neon-pink));
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        .card-inside {
+            position: absolute; inset: 0;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        .scroll-area {
+            flex: 1; overflow-y: auto; padding: 40px 25px;
+            scrollbar-width: none;
+        }
+        .scroll-area::-webkit-scrollbar { display: none; }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px; color: var(--neon-pink);
+            margin: 0 0 25px 0; text-align: center;
+            font-style: italic;
+        }
+
+        .main-text {
+            font-size: 17px; line-height: 1.8; color: #f0f0f0;
+            font-weight: 300; letter-spacing: 0.5px;
+        }
+
+        .main-text b { color: var(--neon-pink); font-weight: 600; }
+
+        .gallery { margin-top: 35px; display: flex; flex-direction: column; gap: 20px; }
+
+        .photo-frame {
+            width: 100%; position: relative;
+            border-radius: 12px; overflow: hidden;
+            border: 1px solid var(--border);
+            background: #111; min-height: 200px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .photo-frame img {
+            width: 100%; display: block; object-fit: cover;
+            transition: transform 0.8s;
+        }
+
+        .photo-frame:hover img { transform: scale(1.1); }
+
+        .photo-label {
+            position: absolute; bottom: 10px; right: 10px;
+            font-size: 10px; color: var(--neon-pink);
+            background: rgba(0,0,0,0.7); padding: 2px 8px; border-radius: 10px;
+        }
+
+        .heart {
+            position: fixed; color: var(--neon-pink);
+            pointer-events: none; z-index: 100;
+            animation: fall linear forwards;
+            filter: drop-shadow(0 0 5px var(--neon-pink));
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) scale(0) rotate(0); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(110vh) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+
+        #musicToggle {
+            position: fixed; top: 20px; right: 20px;
+            background: none; border: 1px solid var(--border);
+            color: var(--neon-pink); padding: 10px; border-radius: 50%;
+            cursor: pointer; z-index: 2000; backdrop-filter: blur(5px);
+            font-size: 20px;
+            width: 45px; height: 45px;
+            display: flex; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="loader-title">ЛУНТИК</div>
+        <div style="letter-spacing: 5px; font-size: 12px; color: #444;">CREATING MAGIC...</div>
+    </div>
+
+    <canvas id="matrix"></canvas>
+
+    <button id="musicToggle" onclick="toggleMusic()">🎵</button>
+
+    <div class="scene">
+        <div class="card" id="mainCard">
+            <div class="card-cover" onclick="handleOpen()">
+                <div class="cover-content">
+                    <h1>🌸</h1>
+                    <div style="color: var(--neon-pink); font-weight: 600; letter-spacing: 5px; margin-top: 20px;">FOR YOU</div>
+                    <div style="font-size: 10px; color: #555; margin-top: 60px; text-transform: uppercase;">Tap to reveal the magic</div>
+                </div>
+            </div>
+
+            <div class="card-inside">
+                <div class="scroll-area">
+                    <h2>С 8 Марта! ❤️</h2>
+                    <div class="main-text">
+                        Айым!<br><br>
+                        Этот день создан для того, чтобы напомнить тебе, насколько ты <b>сногсшибательная красотка</b>..<br><br>
+                        Желаю тебе достичь желаемого, а в жизни было больше поводов для искреннего смеха и меньше причин для суеты. Ты — истинное вдохновение.<br><br>
+                        Пусть каждый твой шаг ведет к мечте, а мир вокруг подстраивается под твои желания.
+                    </div>
+
+                    <div class="gallery">
+                        <div class="photo-frame">
+                            <img src="photo1.jpeg" alt="Selfie">
+                            <div class="photo-label">Beige Vibes</div>
+                        </div>
+
+                        <div class="photo-frame">
+                            <img src="photo2.jpg.jpeg" alt="Marvel Mood">
+                            <div class="photo-label">Marvel Mood</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 40px; color: var(--neon-pink); font-style: italic;">
+                        14.06.2025
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+    <script>
+        const card = document.getElementById('mainCard');
+        const music = document.getElementById('bgMusic');
+        const mBtn = document.getElementById('musicToggle');
+
+        function handleOpen() {
+            card.classList.add('is-open');
+            if (music.paused) {
+                music.volume = 0.4;
+                music.play().then(() => {
+                    mBtn.innerHTML = "⏸️";
+                }).catch(e => console.log("Music play blocked by browser. Interaction needed."));
+            }
+        }
+
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+                mBtn.innerHTML = "⏸️";
+            } else {
+                music.pause();
+                mBtn.innerHTML = "🎵";
+            }
+        }
+
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        let w, h, cols, drops;
+
+        function init() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+            cols = Math.floor(w / 25);
+            drops = Array(cols).fill(1);
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = "#ff4da6";
+            ctx.font = "16px monospace";
+
+            for (let i = 0; i < drops.length; i++) {
+                const char = Math.random() > 0.9 ? "🌸" : (Math.random() > 0.5 ? "0" : "1");
+                ctx.fillText(char, i * 25, drops[i] * 25);
+                if (drops[i] * 25 > h && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        window.onresize = init;
+        init();
+        setInterval(drawMatrix, 50);
+
+        function spawnHeart() {
+            const h = document.createElement('div');
+            h.className = 'heart';
+            h.style.left = Math.random() * 100 + "vw";
+            h.style.fontSize = (Math.random() * 15 + 10) + "px";
+            h.style.animationDuration = (Math.random() * 3 + 5) + "s";
+            h.innerHTML = Math.random() > 0.5 ? "❤" : "✨";
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 8000);
+        }
+        setInterval(spawnHeart, 600);
+    </script>
+</body>
+</html>
